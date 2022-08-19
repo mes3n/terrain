@@ -9,3 +9,4 @@ float noise (float x, float z, float min, float amplitude, float frequency);
 
 
 #endif  // NOISE_H
+ 

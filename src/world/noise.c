@@ -6,7 +6,7 @@
 #define M_PI 3.1415926536
 #endif  // M_PI
 
-float pseudoRandom (float x, float z) 
+float pseudoRandom (float x, float z)
 {   
     int n = x + z * 57;
     n = (n<<13) ^ n;
