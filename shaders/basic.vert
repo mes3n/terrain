@@ -4,11 +4,11 @@ layout (location = 1) in vec3 aColor;
 
 out vec3 color;
 
-// uniform mat4 view;
-uniform mat4 projection;
+uniform mat4 matrix;
 
 void main () 
 {
-    gl_Position = projection * vec4(aPos, 1.0);
+    gl_Position = matrix * vec4(aPos, 1.0);
     color = aColor;
 }
+
