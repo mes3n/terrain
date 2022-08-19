@@ -3,7 +3,7 @@
 
 #include <stdio.h>
 
-#include "math/math.h"
+#include "math/matrix.h"
 #include "rendering/rendering.h"
 
 #include "world/generation.h"
