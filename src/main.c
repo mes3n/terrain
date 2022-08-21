@@ -7,7 +7,6 @@
 #include "rendering/rendering.h"
 
 #include "world/generation.h"
-
 #include "world/noise.h"
 
 
@@ -22,9 +21,10 @@ int main (void)
         return -1;
 
     GLuint shader = loadShaders("shaders/basic.vert", "shaders/basic.frag");
-    
+
+
     int terrainSize;
-    GLuint terrain = generateTerrain(0.0f, -50.0f, 0.0f, 500, 500, 128.0f, &terrainSize);
+    GLuint terrain = generateTerrain(0.0f, -10.0f, 0.0f, 6, 5, 64.0f, &terrainSize);
     
     glUseProgram(shader);
     // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -36,17 +36,12 @@ int main (void)
     {
         processInput(window);
 
-        glUseProgram(shader);
+        getView(window, camera, matrix3d);
+        setMat4(shader, "matrix3d", matrix3d);
+        setVec3(shader, "cameraPos", &camera.position.x);
 
-        set_matrix_3d(matrix3d, window, camera, 45.0f, 100);
-        setMat4(shader, "matrix", matrix3d);
+        render(window, terrain, terrainSize);
 
-        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-        draw(terrain, terrainSize);
-
-        glfwSwapBuffers(window);
         glfwPollEvents();
     }
 
