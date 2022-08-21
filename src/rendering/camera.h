@@ -21,8 +21,8 @@ typedef struct Camera {
 } Camera;
 
 void initCamera(Camera* camera);
-
 void moveCamera (Camera* camera, Vec3 movement);
+
 void getView (GLFWwindow* window, const Camera camera, float* matrix);
 
 #endif  // CAMERA_H
