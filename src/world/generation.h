@@ -4,8 +4,7 @@
 #include <glad/glad.h>
 
 
-GLuint generateTerrain (float centerx, float centery, float centerz, int width, int depth, float amplitude, int* terrainSize);
+GLuint generateTerrain (float centerx, float centery, float centerz, const int width, const int depth, float amplitude, int* terrainSize);
 
-void draw (GLuint vao, int size);
 
 #endif  // GENERATION_H
