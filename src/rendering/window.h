@@ -8,6 +8,8 @@
 typedef struct Camera Camera;
 
 GLFWwindow* createWindow (const char* name, Camera* camera);
+
+void render (GLFWwindow* window, GLuint vao, int amounts);
 void processInput (GLFWwindow* window);
 
 #endif  // WINDOW_H
