@@ -79,3 +79,8 @@ void setMat4 (GLuint program, const char* name, float* matrix)
     glUniformMatrix4fv(glGetUniformLocation(program, name), 1, GL_FALSE, matrix);
 }
 
+void setVec3 (GLuint program, const char* name, float* vector) 
+{
+    glUseProgram(program);
+    glUniform3fv(glGetUniformLocation(program, name), 1, vector);
+}
