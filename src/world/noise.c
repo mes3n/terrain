@@ -2,9 +2,6 @@
 
 #include <math.h>
 
-#ifndef M_PI
-#define M_PI 3.1415926536
-#endif  // M_PI
 
 float pseudoRandom (float x, float z)
 {   

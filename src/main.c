@@ -10,6 +10,28 @@
 #include "world/noise.h"
 
 
+void screenshot (GLFWwindow* window) 
+{
+    const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+    const int width = mode->width;
+    const int height = mode->height;
+    size_t size = width * height * 3;
+
+    unsigned char data[size];
+
+    glReadBuffer(GL_BACK);
+    glReadnPixels(0, 0, width, height, GL_BGR, GL_UNSIGNED_BYTE, size, data);
+
+    FILE* file = fopen("image.tga", "w");
+    short header[] = {0, 2, 0, 0, 0, 0, (short) width, (short) height, 24};
+
+    fwrite(&header, sizeof(header), 1, file);
+    fwrite(data, size, 1, file);
+
+    fclose(file);
+}
+
+
 int main (void) 
 {   
 
@@ -24,7 +46,7 @@ int main (void)
 
 
     int terrainSize;
-    GLuint terrain = generateTerrain(0.0f, -10.0f, 0.0f, 6, 5, 64.0f, &terrainSize);
+    GLuint terrain = generateTerrain(0.0f, -10.0f, 0.0f, 150, 150, 64.0f, &terrainSize);
     
     glUseProgram(shader);
     // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);

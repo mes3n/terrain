@@ -90,7 +90,7 @@ GLuint generateTerrain (float centerx, float centery, float centerz, const int w
     {   
         // int column = (i / 6) / depth;
         // int row = (i / 6) % depth;
-        int trianglesCount = 0;  // found amount of triangles
+        // int trianglesCount = 0;  // found amount of triangles
         // size_t vi = i / 6;
         // if (column == 0 || column == width - 1 || row == 0 || row == depth - 1) 
         // {
@@ -114,6 +114,7 @@ GLuint generateTerrain (float centerx, float centery, float centerz, const int w
         // {
         //     trianglesCount = 6;
         // }
+        int trianglesCount = 0;  // found amount of triangles
         GLuint triangles[6];  // indices of found triangles
         nearbyTriangles(triangles, &trianglesCount, indices, indicesCount, i / fpv);
 
@@ -135,16 +136,16 @@ GLuint generateTerrain (float centerx, float centery, float centerz, const int w
         setVector3(&vertices[i+3], normal.x, normal.y, normal.z);  // set normal component of each vertice
     }
 
-    printf("indices:\n");
-    for (int a = 0; a < indicesCount; a += 3) 
-    {
-        printf("%d: %d, %d, %d\n", a, indices[a+0], indices[a+1], indices[a+2]);
-    }    
-    printf("vertices:\n");
-    for (int a = 0; a < verticesCount; a += fpv) 
-    {
-        printf("%d: %f, %f, %f\n", a, vertices[a+0], vertices[a+1], vertices[a+2]);
-    }
+    // printf("indices:\n");
+    // for (int a = 0; a < indicesCount; a += 3) 
+    // {
+    //     printf("%d: %d, %d, %d\n", a, indices[a+0], indices[a+1], indices[a+2]);
+    // }    
+    // printf("vertices:\n");
+    // for (int a = 0; a < verticesCount; a += fpv) 
+    // {
+    //     printf("%d: %f, %f, %f\n", a, vertices[a+0], vertices[a+1], vertices[a+2]);
+    // }
 
     GLuint vao, vbo, ebo;
     glGenVertexArrays(1, &vao);
