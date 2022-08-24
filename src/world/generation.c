@@ -230,6 +230,7 @@ GLuint generateTerrain (float centerx, float centery, float centerz, const int w
         if (trianglesCount != 0)
             normal = scaleVector(normal, 1.0f/trianglesCount);
         setVector3(&vertices[i+3], normal.x, normal.y, normal.z);  // set normal component of each vertice
+        free(triangles);
     }
 
     GLuint vao, vbo, ebo;
