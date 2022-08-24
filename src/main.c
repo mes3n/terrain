@@ -46,7 +46,7 @@ int main (void)
 
 
     int terrainSize;
-    GLuint terrain = generateTerrain(0.0f, -10.0f, 0.0f, 150, 150, 64.0f, &terrainSize);
+    GLuint terrain = generateTerrain(0.0f, -10.0f, 0.0f, 1000, 1000, 64.0f, &terrainSize);
     
     glUseProgram(shader);
     // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);

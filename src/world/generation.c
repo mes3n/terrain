@@ -4,6 +4,7 @@
 #include "../math/vector.h"
 
 #include <stdlib.h>
+#include <stddef.h>
 #include <stdio.h>
 
 
@@ -21,6 +22,14 @@ static void setIndices(GLuint* indices, GLuint x, GLuint y, GLuint z)
     indices[2] = z;
 }
 
+static void copyArray (GLuint* arr1, GLuint* arr2, size_t lenght) 
+{
+    for (size_t i = 0; i < lenght; i++) {
+        arr1[i] = arr2[i];
+    }
+}
+
+
 static int nearby(float n1, float n2, float p) 
 {
     if (n1 - n2 > p)
@@ -31,23 +40,23 @@ static int nearby(float n1, float n2, float p)
         return 1;
 }
 
-static void nearbyTriangles (GLuint* triangles, int* trianglesCount, const GLuint* indices, int indicesCount, GLuint index)  
-// find all triangles using vertex at index
-{
-    int counter = 0;
-    for (int i = 0; i < indicesCount; i += 3) {
-        if (indices[i+0] == index || indices[i+1] == index || indices[i+2] == index)
-        {
-            triangles[counter] = i;
-            counter++;
-        }
-        if (counter >= 6) {
-            *trianglesCount = counter;
-            return;
-        }
-    }
-    *trianglesCount = counter;
-}
+// static void nearbyTriangles (GLuint* triangles, int* trianglesCount, const GLuint* indices, int indicesCount, GLuint index)  
+// // find all triangles using vertex at index
+// {
+//     int counter = 0;
+//     for (int i = 0; i < indicesCount; i += 3) {
+//         if (indices[i+0] == index || indices[i+1] == index || indices[i+2] == index)
+//         {
+//             triangles[counter] = i;
+//             counter++;
+//         }
+//         if (counter >= 6) {
+//             *trianglesCount = counter;
+//             return;
+//         }
+//     }
+//     *trianglesCount = counter;
+// }
 
 GLuint generateTerrain (float centerx, float centery, float centerz, const int width, const int depth, float amplitude, int* terrainSize)  // width = depth atm
 {
@@ -88,43 +97,130 @@ GLuint generateTerrain (float centerx, float centery, float centerz, const int w
     counter = 0;
     for (size_t i = 0; i < verticesCount; i += fpv) 
     {   
-        // int column = (i / 6) / depth;
-        // int row = (i / 6) % depth;
-        // int trianglesCount = 0;  // found amount of triangles
-        // size_t vi = i / 6;
-        // if (column == 0 || column == width - 1 || row == 0 || row == depth - 1) 
-        // {
-        //     if ((column == 0 && row == 0) || (row == 0 && column == width - 1)) 
-        //     {
-        //         trianglesCount = 1;
-        //         GLuint triangles[3] = {
-        //             vi, 
-        //         };
-        //     }
-        //     else if ((column == 0 && row == 0) || (row == depth - 1 && column == width - 1)) 
-        //     {
-        //         trianglesCount = 2;
-        //     }
-        //     else 
-        //     {
-        //         trianglesCount = 3;
-        //     }
-        // }
-        // else 
-        // {
-        //     trianglesCount = 6;
-        // }
+        size_t vi = i / fpv;
+        int column = vi % depth;
+        int row = vi / depth;
         int trianglesCount = 0;  // found amount of triangles
-        GLuint triangles[6];  // indices of found triangles
-        nearbyTriangles(triangles, &trianglesCount, indices, indicesCount, i / fpv);
+        GLuint* triangles;
+        if (column == 0 || column == width - 1 || row == 0 || row == depth - 1) 
+        {
+            if (column == 0) 
+            {
+                if (row == depth - 1)  // corner top left
+                {
+                    trianglesCount = 1;
+                    GLuint tempTriangles[3] = {
+                        vi, vi + 1, vi - width,
+                    };
+                    triangles = (GLuint*)calloc(trianglesCount * 3, sizeof(GLuint));
+                    copyArray(triangles, tempTriangles, trianglesCount * 3);
+                }
+                else if (row == 0)  // corner bottom left
+                {
+                    trianglesCount = 2;
+                    GLuint tempTriangles[6] = {
+                        vi, vi + 1, vi + 1 + width,
+                        vi, vi + width, vi + 1 + width,
+                    };
+                    triangles = (GLuint*)calloc(trianglesCount * 3, sizeof(GLuint));
+                    copyArray(triangles, tempTriangles, trianglesCount * 3);
+                }
+                else 
+                {
+                    trianglesCount = 3;
+                    GLuint tempTriangles[9] = {
+                        vi, vi + width, vi + width + 1,
+                        vi, vi + width + 1, vi + 1,
+                        vi, vi + 1, vi - width,
+                    };
+                    triangles = (GLuint*)calloc(trianglesCount * 3, sizeof(GLuint));
+                    copyArray(triangles, tempTriangles, trianglesCount * 3);
+                }
+            }
+            else if (row == 0)
+            {
+                if (column == width - 1)  // corner bottom right
+                {
+                    trianglesCount = 1;
+                    GLuint tempTriangles[3] = {
+                        vi, vi - 1, vi + width,
+                    };
+                    triangles = (GLuint*)calloc(trianglesCount * 3, sizeof(GLuint));
+                    copyArray(triangles, tempTriangles, trianglesCount * 3);
+                }
+                else
+                {
+                    trianglesCount = 3;
+                    GLuint tempTriangles[9] = {
+                        vi, vi - 1, vi + width,
+                        vi, vi + width, vi + width + 1,
+                        vi, vi + width + 1, vi + 1,
+                    };
+                    triangles = (GLuint*)calloc(trianglesCount * 3, sizeof(GLuint));
+                    copyArray(triangles, tempTriangles, trianglesCount * 3);
+                }
+            }
+            else if (column == width - 1) 
+            {
+                if (row == depth - 1)  // corner top rigth
+                {
+                    trianglesCount = 2;
+                    GLuint tempTriangles[6] = {
+                        vi, vi - 1, vi - 1 - width,
+                        vi, vi - width, vi -1 - width,
+                    };
+                    triangles = (GLuint*)calloc(trianglesCount * 3, sizeof(GLuint));
+                    copyArray(triangles, tempTriangles, trianglesCount * 3);
+                }
+                else 
+                {
+                    trianglesCount = 3;
+                    GLuint tempTriangles[9] = {
+                        vi, vi - width, vi - width - 1,
+                        vi, vi - width - 1, vi - 1,
+                        vi, vi - 1, vi + width,
+                    };
+                    triangles = (GLuint*)calloc(trianglesCount * 3, sizeof(GLuint));
+                    copyArray(triangles, tempTriangles, trianglesCount * 3);
+                }
 
+            }
+            else if (row == depth - 1)
+            {
+                trianglesCount = 3;
+                GLuint tempTriangles[9] = {
+                    vi, vi + 1, vi - width,
+                    vi, vi - width, vi - width - 1,
+                    vi, vi - width - 1, vi - 1,
+                };
+                triangles = (GLuint*)calloc(trianglesCount * 3, sizeof(GLuint));
+                copyArray(triangles, tempTriangles, trianglesCount * 3);
+            }
+        }
+        else 
+        {
+            trianglesCount = 6;
+            GLuint tempTriangles[18] = {
+                vi, vi + width, vi + width + 1,
+                vi, vi + width + 1, vi + 1,
+                vi, vi + 1, vi - width,
+                vi, vi - width, vi - width - 1,
+                vi, vi - width - 1, vi - 1,
+                vi, vi - 1, vi + width,
+            };
+            triangles = (GLuint*)calloc(trianglesCount * 3, sizeof(GLuint));
+            copyArray(triangles, tempTriangles, trianglesCount * 3);
+        }
+        // int trianglesCount = 0;  // found amount of triangles
+        // GLuint triangles[6];  // indices of found triangles
+        // nearbyTriangles(triangles, &trianglesCount, indices, indicesCount, i / fpv);
 
         Vec3 corners[3], normal;
         setVector3(&normal.x, 0.0f, 0.0f, 0.0f);
-        for (int ii = 0; ii < trianglesCount; ii++) {
+        for (int ii = 0; ii < trianglesCount * 3; ii += 3) {
             for (size_t j = 0; j < 3; j++) 
             {
-                GLuint vi = indices[triangles[ii]+j] * fpv;  // index of vertex
+                GLuint vi = triangles[ii + j] * fpv;  // index of vertex[0]
                 corners[j].x = vertices[vi+0];
                 corners[j].y = vertices[vi+1];
                 corners[j].z = vertices[vi+2];
@@ -135,17 +231,6 @@ GLuint generateTerrain (float centerx, float centery, float centerz, const int w
             normal = scaleVector(normal, 1.0f/trianglesCount);
         setVector3(&vertices[i+3], normal.x, normal.y, normal.z);  // set normal component of each vertice
     }
-
-    // printf("indices:\n");
-    // for (int a = 0; a < indicesCount; a += 3) 
-    // {
-    //     printf("%d: %d, %d, %d\n", a, indices[a+0], indices[a+1], indices[a+2]);
-    // }    
-    // printf("vertices:\n");
-    // for (int a = 0; a < verticesCount; a += fpv) 
-    // {
-    //     printf("%d: %f, %f, %f\n", a, vertices[a+0], vertices[a+1], vertices[a+2]);
-    // }
 
     GLuint vao, vbo, ebo;
     glGenVertexArrays(1, &vao);
