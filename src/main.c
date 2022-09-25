@@ -61,7 +61,6 @@ int main (void)
     {
         processInput(window);
 
-        
         getView(window, camera, matrix3d);
         getLightPos(&lightOrigin, glfwGetTime());
 
