@@ -7,6 +7,7 @@
 #include "rendering/rendering.h"
 
 #include "world/generation.h"
+#include "world/light.h"
 #include "world/noise.h"
 
 
@@ -44,10 +45,12 @@ int main (void)
 
     GLuint shader = loadShaders("shaders/basic.vert", "shaders/basic.frag");
 
-
     int terrainSize;
     GLuint terrain = generateTerrain(0.0f, -10.0f, 0.0f, 1000, 1000, 64.0f, &terrainSize);
-    
+
+    Vec3 lightOrigin;
+    getLightPos(&lightOrigin, glfwGetTime());
+
     glUseProgram(shader);
     // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     // glLineWidth(5.0f);
@@ -58,9 +61,13 @@ int main (void)
     {
         processInput(window);
 
+        
         getView(window, camera, matrix3d);
+        getLightPos(&lightOrigin, glfwGetTime());
+
         setMat4(shader, "matrix3d", matrix3d);
         setVec3(shader, "cameraPos", &camera.position.x);
+        setVec3(shader, "lightOrigin", &lightOrigin.x);
 
         render(window, terrain, terrainSize);
 
