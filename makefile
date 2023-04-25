@@ -13,10 +13,10 @@ OBJ_FILES = $(patsubst $(SRC_DIR)/%.c, $(OBJ_DIR)/%.o, $(wildcard $(SRC_DIR)/*.c
 
 
 main: $(OBJ_FILES)
-	$(CC) $(LDFLAGS) -o bin/$@ $^
+	$(CC) -o bin/$@ $^ $(LDFLAGS) 
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
-	$(CC) $(CFLAGS) -o $@ -c $<
+	$(CC) -o $@ -c $< $(CFLAGS)
 
 all: clean main
 
