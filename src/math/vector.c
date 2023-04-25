@@ -2,6 +2,13 @@
 
 #include <math.h>
 
+void setVector3(float* arr, float x, float y, float z) 
+{
+    arr[0] = x;
+    arr[1] = y;
+    arr[2] = z;
+}
+
 float lengthOf (const Vec3 vector) 
 {
     return sqrt(vector.x*vector.x + vector.y*vector.y + vector.z*vector.z);

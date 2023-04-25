@@ -1,6 +1,10 @@
 #ifndef VECTOR_H
 #define VECTOR_H
 
+#define SET_VEC3(vec, a, b, c) \
+    vec.x = a; \
+    vec.y = b; \
+    vec.z = c;
 
 typedef struct {
     float x;
@@ -9,7 +13,7 @@ typedef struct {
 } Vec3;
 
 
-float lenghtOf (const Vec3 vector);
+float lengthOf (const Vec3 vector);
 Vec3 normalize (const Vec3 vector);
 
 Vec3 cross (const Vec3 v1, const Vec3 v2);

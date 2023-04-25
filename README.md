@@ -10,7 +10,7 @@ Most dependencies are includes in the src directory, however OpenGL is neeeded.
 Generates a 3d terrain using 2d noise for heightmapping. The terrain loading algorith can be configured with parameters for noise amplitudes and size. Also includes a moving light source and shaders to  illuminate the environment.
 
 Below is an example of the loaded terrain:
-![Alt Text](image.png)
+![Alt Text](assets/example.png)
 
 ## How it works
 

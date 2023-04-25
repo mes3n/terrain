@@ -4,7 +4,7 @@ CC = gcc
 MYDIR = .
 SRC_DIR = $(MYDIR)/src
 OBJ_DIR = $(MYDIR)/obj
-CFLAGS = -Wall -g
+CFLAGS = -Wall -g -I src/deps
 LDFLAGS = -Wall -g -lm -lglfw -lGL# link these
 
 # create list of object files from source files but replace ".cpp" and "src"

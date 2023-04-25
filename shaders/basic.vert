@@ -10,6 +10,7 @@ uniform mat4 matrix3d;
 void main () 
 {
     gl_Position = matrix3d * vec4(vertexPos, 1.0);
+    gl_PointSize = 10.0;
     fragNormal = vertexNormal;
     fragPos = vertexPos;
 }
