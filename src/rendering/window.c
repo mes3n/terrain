@@ -49,8 +49,9 @@ static void cursor_position_callback(GLFWwindow *window, double xpos, double ypo
 
 GLFWwindow *createWindow(const char *name, Camera *camera)
 {
-    if (!glfwInit()) {
-        const char* err;
+    if (!glfwInit())
+    {
+        const char *err;
         glfwGetError(&err);
         printf("Failed to initialize GLFW: %s\n", err);
         return NULL;
@@ -69,8 +70,8 @@ GLFWwindow *createWindow(const char *name, Camera *camera)
 
     GLFWwindow *window = glfwCreateWindow(mode->width, mode->height, "OpenGL", monitor, NULL);
     if (window == NULL)
-    {   
-        const char* err;
+    {
+        const char *err;
         glfwGetError(&err);
         printf("Failed to create GLFW window: %s\n", err);
         return NULL;
@@ -129,18 +130,19 @@ void processInput(GLFWwindow *window)
     moveCamera(camera, velocity);
 }
 
-void render(GLFWwindow *window, renderable* toRender, int renderCount)
+void render(GLFWwindow *window, Renderable *toRender, int renderCount)
 {
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    for (int i = 0; i < renderCount; i++) {
+    for (int i = 0; i < renderCount; i++)
+    {
+        glUseProgram(toRender[i].shader);
         glBindVertexArray(toRender[i].vao);
         glDrawElements(GL_TRIANGLES, toRender[i].size, GL_UNSIGNED_INT, 0);
         glBindVertexArray(0);
+        glUseProgram(0);
     }
-
-
 
     glfwSwapBuffers(window);
 }
