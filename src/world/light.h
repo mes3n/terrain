@@ -10,6 +10,7 @@
 
 void getLightPos(Vec3 *lightOrigin, double time);
 
-GLuint generateIcoSphere(float radius, int refine, int *sphereSize);
+GLuint generateIcoSphere(float radius, int refine, int *sphereSize);  // No support for finer sphere
+GLuint generateUVSphere(float radius, int *sphereSize);
 
 #endif // LIGHT_H

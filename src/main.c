@@ -43,30 +43,28 @@ int main(void)
     if (window == NULL)
         return 1;
 
-    renderable toRender[10];
+    Renderable toRender[10];
     int renderCount = 0;
 
-    GLuint shader = loadShaders("shaders/basic.vert", "shaders/basic.frag");
+    GLuint basicShader = loadShaders("shaders/basic.vert", "shaders/basic.frag");
+    GLuint lightShader = loadShaders("shaders/light.vert", "shaders/light.frag");
 
     int terrainSize;
     GLuint terrain = generateTerrain(500, 500, &terrainSize);
-    toRender[0] = (renderable){.vao = terrain, .size = terrainSize};
-    renderCount += 1;
+    toRender[renderCount++] = (Renderable){.vao = terrain, .size = terrainSize, .shader = basicShader};
 
     Vec3 lightOrigin;
     getLightPos(&lightOrigin, glfwGetTime());
 
-    // int sphereSize;
-    // GLuint sphere = generateIcoSphere(10.0f, 1, &sphereSize);
-    // toRender[1] = (renderable){.vao = sphere, .size = sphereSize};
-    // renderCount += 1;
+    // int icoSphereSize;
+    // GLuint icoSphere = generateIcoSphere(10.0f, 0, &icoSphereSize);
+    // toRender[renderCount++] = (Renderable){.vao = icoSphere, .size = icoSphereSize};
 
-    // int sphereSize2;
-    // GLuint sphere2 = generateIcoSphere(15.0f, 0, &sphereSize2);
-    // toRender[2] = (renderable){.vao = sphere2, .size = sphereSize2};
-    // renderCount += 1;
+    int uvSphereSize;
+    GLuint uvSphere = generateUVSphere(5.0f, &uvSphereSize);
+    toRender[renderCount++] = (Renderable){.vao = uvSphere, .size = uvSphereSize, .shader = lightShader};
 
-    glUseProgram(shader);
+    glUseProgram(basicShader);
     // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     // glLineWidth(5.0f);
 
@@ -81,18 +79,22 @@ int main(void)
         getView(window, camera, matrix3d);
         getLightPos(&lightOrigin, glfwGetTime());
 
-        setMat4(shader, "matrix3d", matrix3d);
-        setVec3(shader, "cameraPos", &camera.position.x);
-        setVec3(shader, "lightOrigin", &lightOrigin.x);
+        setMat4(basicShader, "matrix3d", matrix3d);
+        setVec3(basicShader, "cameraPos", &camera.position.x);
+        setVec3(basicShader, "lightOrigin", &lightOrigin.x);
+        setMat4(lightShader, "matrix3d", matrix3d);
+        setVec3(lightShader, "lightOrigin", &lightOrigin.x);
 
         render(window, toRender, renderCount);
 
         glfwPollEvents();
     }
-    
-    // glDeleteVertexArrays(1, &sphere);
-    glDeleteVertexArrays(1, &terrain);
-    glDeleteProgram(shader);
+
+    // for (int i = 0; i < renderCount; i++) {
+    //     glDeleteVertexArrays(1, toRender[i].vao);
+    // }
+    glDeleteProgram(basicShader);
+    glDeleteProgram(lightShader);
     glfwTerminate();
     return 0;
 }

@@ -4,7 +4,7 @@
 #include <stdlib.h>
 
 
-static char* readFile(const char* path) {
+inline static char* readFile(const char* path) {
     FILE* file = fopen(path, "rb");
 
     if (file == NULL) 
@@ -27,7 +27,7 @@ static char* readFile(const char* path) {
     }
 }
 
-static GLuint loadShader(const char* path, GLenum type, GLuint program) {
+inline static GLuint loadShader(const char* path, GLenum type, GLuint program) {
     GLuint shader = glCreateShader(type);
 
     char* content = readFile(path);
