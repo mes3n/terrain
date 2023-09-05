@@ -10,8 +10,6 @@
 #include <stddef.h>
 #include <string.h>
 
-#define FLOAT_EQ(x, y, h) \
-    -h < x - y && x - y > h
 
 GLuint generateTerrain(const int width, const int depth, int *terrainSize) // width = depth atm
 {
@@ -47,9 +45,9 @@ GLuint generateTerrain(const int width, const int depth, int *terrainSize) // wi
         }
     }
     counter = 0;
-    for (size_t i = 0; i < verticesCount; i += 1) // generate indices from heightmap
+    for (size_t i = width; i < verticesCount; i += 1) // generate indices from heightmap
     {
-        if (FLOAT_EQ(vertices[i].position.x, startx, 0.01) && FLOAT_EQ(vertices[i].position.z, startz, 0.01)) // if not at start edge
+        if (i % width != 0) // if not at start edge
         {
             SET_ARRAY((&indices[counter + 0]), i, i - depth, i - depth - 1);
             SET_ARRAY((&indices[counter + 3]), i, i - depth - 1, i - 1);
