@@ -90,9 +90,9 @@ int main(void)
         glfwPollEvents();
     }
 
-    // for (int i = 0; i < renderCount; i++) {
-    //     glDeleteVertexArrays(1, toRender[i].vao);
-    // }
+    for (int i = 0; i < renderCount; i++) {
+        glDeleteVertexArrays(1, &toRender[i].vao);
+    }
     glDeleteProgram(basicShader);
     glDeleteProgram(lightShader);
     glfwTerminate();
