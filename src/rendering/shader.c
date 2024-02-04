@@ -3,17 +3,18 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-
-inline static char* readFile(const char* path) {
+inline static char*
+readFile(const char* path)
+{
     FILE* file = fopen(path, "rb");
 
-    if (file == NULL) 
+    if (file == NULL)
     {
         fprintf(stderr, "Could not open file %s.\n", path);
         fclose(file);
         return NULL;
     }
-    else 
+    else
     {
         fseek(file, 0, SEEK_END);
         size_t size = ftell(file);
@@ -27,18 +28,19 @@ inline static char* readFile(const char* path) {
     }
 }
 
-inline static GLuint loadShader(const char* path, GLenum type, GLuint program) {
+inline static GLuint
+loadShader(const char* path, GLenum type)
+{
     GLuint shader = glCreateShader(type);
-
     char* content = readFile(path);
 
     printf("Compiling shader %s.\n", path);
     glShaderSource(shader, 1, (const char**)&content, NULL);
-    glCompileShader(shader); 
+    glCompileShader(shader);
 
     int status;
     glGetShaderiv(shader, GL_COMPILE_STATUS, &status);
-    if (status == GL_FALSE) 
+    if (status == GL_FALSE)
     {
         GLchar infoLog[512];
         glGetShaderInfoLog(shader, 512, NULL, infoLog);
@@ -47,14 +49,15 @@ inline static GLuint loadShader(const char* path, GLenum type, GLuint program) {
     }
 
     free(content);
-
     return shader;
 }
 
-GLuint loadShaders (const char* vertPath, const char* fragPath) {
+GLuint
+loadShaders(const char* vertPath, const char* fragPath)
+{
     GLuint program = glCreateProgram();
-    GLuint vertShader = loadShader(vertPath, GL_VERTEX_SHADER, program);
-    GLuint fragShader = loadShader(fragPath, GL_FRAGMENT_SHADER, program);
+    GLuint vertShader = loadShader(vertPath, GL_VERTEX_SHADER);
+    GLuint fragShader = loadShader(fragPath, GL_FRAGMENT_SHADER);
 
     glAttachShader(program, vertShader);
     glAttachShader(program, fragShader);
@@ -62,7 +65,7 @@ GLuint loadShaders (const char* vertPath, const char* fragPath) {
 
     int status;
     glGetProgramiv(program, GL_LINK_STATUS, &status);
-    if (status == GL_FALSE) 
+    if (status == GL_FALSE)
     {
         GLchar infoLog[512];
         glGetProgramInfoLog(program, 512, NULL, infoLog);
@@ -73,13 +76,16 @@ GLuint loadShaders (const char* vertPath, const char* fragPath) {
     return program;
 }
 
-void setMat4 (GLuint program, const char* name, float* matrix) 
+void
+setMat4(GLuint program, const char* name, float* matrix)
 {
     glUseProgram(program);
-    glUniformMatrix4fv(glGetUniformLocation(program, name), 1, GL_FALSE, matrix);
+    glUniformMatrix4fv(glGetUniformLocation(program, name), 1, GL_FALSE,
+        matrix);
 }
 
-void setVec3 (GLuint program, const char* name, float* vector) 
+void
+setVec3(GLuint program, const char* name, float* vector)
 {
     glUseProgram(program);
     glUniform3fv(glGetUniformLocation(program, name), 1, vector);

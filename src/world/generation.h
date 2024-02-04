@@ -3,8 +3,7 @@
 
 #include <glad/glad.h>
 
+GLuint
+generateTerrain(const int width, const int depth, int* terrainSize);
 
-GLuint generateTerrain (const int width, const int depth, int* terrainSize);
-
-
-#endif  // GENERATION_H
+#endif // GENERATION_H

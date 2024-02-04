@@ -4,10 +4,11 @@
 
 #ifndef M_PI
 #define M_PI 3.1415926536
-#endif  // M_PI
+#endif // M_PI
 
-
-void mat_translate(float *matrix, Vec3 v) {
+void
+mat_translate(float* matrix, Vec3 v)
+{
     matrix[0] = 1.0f;
     matrix[1] = 0.0f;
     matrix[2] = 0.0f;
@@ -26,7 +27,9 @@ void mat_translate(float *matrix, Vec3 v) {
     matrix[15] = 1.0f;
 }
 
-void mat_rotate(float *matrix, Vec3 axis, float angle) {
+void
+mat_rotate(float* matrix, Vec3 axis, float angle)
+{
     axis = normalize(axis);
     float s = sinf(angle);
     float c = cosf(angle);
@@ -54,14 +57,18 @@ void mat_rotate(float *matrix, Vec3 axis, float angle) {
     matrix[15] = 1.0f;
 }
 
-void mat_multiply(float *matrix, const float *m1, const float *m2) 
+void
+mat_multiply(float* matrix, const float* m1, const float* m2)
 {
     float result[16];
-    for (int c = 0; c < 4; c++) {
-        for (int r = 0; r < 4; r++) {
+    for (int c = 0; c < 4; c++)
+    {
+        for (int r = 0; r < 4; r++)
+        {
             int index = c * 4 + r;
             float total = 0;
-            for (int i = 0; i < 4; i++) {
+            for (int i = 0; i < 4; i++)
+            {
                 int p = i * 4 + r;
                 int q = c * 4 + i;
                 total += m1[p] * m2[q];
@@ -69,13 +76,14 @@ void mat_multiply(float *matrix, const float *m1, const float *m2)
             result[index] = total;
         }
     }
-    for (unsigned int i = 0; i < 16; i++) 
+    for (unsigned int i = 0; i < 16; i++)
     {
         matrix[i] = result[i];
     }
 }
 
-void mat_identity (float* matrix) 
+void
+mat_identity(float* matrix)
 {
     matrix[0] = 1.0f;
     matrix[1] = 0.0f;
@@ -95,7 +103,10 @@ void mat_identity (float* matrix)
     matrix[15] = 1.0f;
 }
 
-void mat_frustum (float *matrix, float left, float right, float bottom, float top, float znear, float zfar) {
+void
+mat_frustum(float* matrix, float left, float right, float bottom, float top,
+    float znear, float zfar)
+{
     float temp, temp2, temp3, temp4;
     temp = 2.0 * znear;
     temp2 = right - left;
@@ -119,15 +130,20 @@ void mat_frustum (float *matrix, float left, float right, float bottom, float to
     matrix[15] = 0.0f;
 }
 
-void mat_perspective (float *matrix, float fov, float aspect, float znear, float zfar) {
+void
+mat_perspective(float* matrix, float fov, float aspect, float znear,
+    float zfar)
+{
     float ymax, xmax;
     ymax = znear * tanf(fov * M_PI / 360.0f);
     xmax = ymax * aspect;
     mat_frustum(matrix, -xmax, xmax, -ymax, ymax, znear, zfar);
 }
 
-void set_matrix_3d (float *matrix, GLFWwindow* window, const Camera camera, float fov, int radius)
-{   
+void
+set_matrix_3d(float* matrix, GLFWwindow* window, const Camera camera,
+    float fov, int radius)
+{
     int width, height;
     glfwGetWindowSize(window, &width, &height);
 

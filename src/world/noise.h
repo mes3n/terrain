@@ -1,7 +1,7 @@
 #ifndef NOISE_H
 #define NOISE_H
 
-float noise (float x, float z, float amplitude, float frequency);
+float
+noise(float x, float z, float amplitude, float frequency);
 
-#endif  // NOISE_H
- 
+#endif // NOISE_H

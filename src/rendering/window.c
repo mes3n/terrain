@@ -1,18 +1,20 @@
-#include <glad/glad.h> // glad must always be included before glfw
+#include <glad/glad.h>
 
 #include "window.h"
 
 #include "../math/vector.h"
 
-#include <stdio.h>
 #include <math.h>
+#include <stdio.h>
 
-static void framebuffer_size_callback(GLFWwindow *window, int width, int heigth)
+static void
+framebuffer_size_callback(GLFWwindow* window, int width, int heigth)
 {
     glViewport(0, 0, width, heigth);
 }
 
-static void cursor_position_callback(GLFWwindow *window, double xpos, double ypos)
+static void
+cursor_position_callback(GLFWwindow* window, double xpos, double ypos)
 {
     static char counter = 0;
 
@@ -26,7 +28,7 @@ static void cursor_position_callback(GLFWwindow *window, double xpos, double ypo
     }
     else
     {
-        Camera *camera = glfwGetWindowUserPointer(window);
+        Camera* camera = glfwGetWindowUserPointer(window);
 
         float dx = (float)(xpos - xcenter);
         float dy = (float)(ypos - ycenter);
@@ -47,11 +49,12 @@ static void cursor_position_callback(GLFWwindow *window, double xpos, double ypo
     }
 }
 
-GLFWwindow *createWindow(const char *name, Camera *camera)
+GLFWwindow*
+createWindow(const char* name, Camera* camera)
 {
     if (!glfwInit())
     {
-        const char *err;
+        const char* err;
         glfwGetError(&err);
         printf("Failed to initialize GLFW: %s\n", err);
         return NULL;
@@ -61,17 +64,18 @@ GLFWwindow *createWindow(const char *name, Camera *camera)
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    GLFWmonitor *monitor = glfwGetPrimaryMonitor();
-    const GLFWvidmode *mode = glfwGetVideoMode(monitor);
+    GLFWmonitor* monitor = glfwGetPrimaryMonitor();
+    const GLFWvidmode* mode = glfwGetVideoMode(monitor);
 
     glfwWindowHint(GLFW_REFRESH_RATE, mode->refreshRate);
     glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
     glfwWindowHint(GLFW_MAXIMIZED, GL_TRUE);
 
-    GLFWwindow *window = glfwCreateWindow(mode->width, mode->height, "OpenGL", monitor, NULL);
+    GLFWwindow* window
+        = glfwCreateWindow(mode->width, mode->height, name, monitor, NULL);
     if (window == NULL)
     {
-        const char *err;
+        const char* err;
         glfwGetError(&err);
         printf("Failed to create GLFW window: %s\n", err);
         return NULL;
@@ -99,9 +103,10 @@ GLFWwindow *createWindow(const char *name, Camera *camera)
     return window;
 }
 
-void processInput(GLFWwindow *window)
+void
+processInput(GLFWwindow* window)
 {
-    Camera *camera = glfwGetWindowUserPointer(window);
+    Camera* camera = glfwGetWindowUserPointer(window);
 
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, 1);
@@ -115,9 +120,11 @@ void processInput(GLFWwindow *window)
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
         velocity = subVector(velocity, camera->forward);
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-        velocity = addVector(velocity, normalize(cross(camera->forward, camera->worldUp)));
+        velocity = addVector(
+            velocity, normalize(cross(camera->forward, camera->worldUp)));
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-        velocity = subVector(velocity, normalize(cross(camera->forward, camera->worldUp)));
+        velocity = subVector(
+            velocity, normalize(cross(camera->forward, camera->worldUp)));
     if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
         velocity = subVector(velocity, camera->worldUp);
     if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
@@ -130,18 +137,20 @@ void processInput(GLFWwindow *window)
     moveCamera(camera, velocity);
 }
 
-void render(GLFWwindow *window, Renderable *toRender, int renderCount)
+void
+render(GLFWwindow* window, const Renderable* toRender)
 {
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    for (int i = 0; i < renderCount; i++)
+    while (toRender != NULL)
     {
-        glUseProgram(toRender[i].shader);
-        glBindVertexArray(toRender[i].vao);
-        glDrawElements(GL_TRIANGLES, toRender[i].size, GL_UNSIGNED_INT, 0);
+        glUseProgram(toRender->shader);
+        glBindVertexArray(toRender->vao);
+        glDrawElements(GL_TRIANGLES, toRender->size, GL_UNSIGNED_INT, 0);
         glBindVertexArray(0);
         glUseProgram(0);
+        toRender = toRender->next;
     }
 
     glfwSwapBuffers(window);

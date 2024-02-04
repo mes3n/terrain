@@ -14,7 +14,7 @@ typedef struct
 {
     Vec3 position;
     Vec3 normal;
-    
+
 } Vertex;
 
 #endif // VERTEX_H

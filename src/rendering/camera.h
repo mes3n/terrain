@@ -2,10 +2,10 @@
 #define CAMERA_H
 
 #include "../math/vector.h"
+#include <GLFW/glfw3.h>
 
-#include "window.h"
-
-typedef struct Camera {
+typedef struct Camera
+{
     Vec3 position;
     Vec3 facing;
     Vec3 worldUp;
@@ -20,9 +20,12 @@ typedef struct Camera {
 
 } Camera;
 
-void initCamera(Camera* camera);
-void moveCamera (Camera* camera, Vec3 movement);
+void
+initCamera(Camera* camera);
+void
+moveCamera(Camera* camera, Vec3 movement);
 
-void getView (GLFWwindow* window, const Camera camera, float* matrix);
+void
+getView(GLFWwindow* window, const Camera camera, float* matrix);
 
-#endif  // CAMERA_H
+#endif // CAMERA_H

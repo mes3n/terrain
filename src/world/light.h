@@ -8,9 +8,13 @@
 #define LIGHT_PATH_HEIGHT 200
 #define LIGHT_PATH_RADIUS 200
 
-void getLightPos(Vec3 *lightOrigin, double time);
+void
+getLightPos(Vec3* lightOrigin, double time);
 
-GLuint generateIcoSphere(float radius, int refine, int *sphereSize);  // No support for finer sphere
-GLuint generateUVSphere(float radius, int *sphereSize);
+// GLuint
+// generateIcoSphere(float radius, int refine, int* sphereSize);
+
+GLuint
+generateUVSphere(float radius, int* sphereSize);
 
 #endif // LIGHT_H
