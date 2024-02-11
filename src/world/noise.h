@@ -1,7 +1,13 @@
 #ifndef NOISE_H
 #define NOISE_H
 
+void
+perlinInit();
+
 float
-noise(float x, float z, float amplitude, float frequency);
+perlinNoise(float x, float y);
+
+float
+perlinTurbulence(float x, float y, float amp, float freq, int depth);
 
 #endif // NOISE_H

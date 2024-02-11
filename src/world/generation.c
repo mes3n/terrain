@@ -13,6 +13,7 @@
 GLuint
 generateTerrain(const int width, const int depth, int* terrainSize) // width = depth atm
 {
+    perlinInit();
     const size_t verticesCount = (size_t)(width * depth);
     Vertex* vertices = (Vertex*)malloc(verticesCount * sizeof(Vertex));
 
@@ -30,7 +31,8 @@ generateTerrain(const int width, const int depth, int* terrainSize) // width = d
         for (float z = startz; z < startz + depth; z += 1.0f)
         {
             // float y = simplex2(x, z, 7, 2.0f, 0.4f) * amplitude + centery;
-            float y = noise(x, z, 1.0f, 0.01f);
+            float y = perlinTurbulence(x, z, 100.0f, 0.005f, 7) - 100.0f;
+            // float y = perlinNoise(x, z);
             SET_VEC3(vertices[counter].position, x, y, z);
 
             counter += 1;

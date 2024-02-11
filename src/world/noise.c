@@ -1,61 +1,107 @@
 #include "noise.h"
 
 #include <math.h>
+#include <stdlib.h>
 
-// float pseudoRandom (float x, float z)
-// {
-//     int n = x + z*1242;
-//     n = (n<<13) ^ n;
-//     return (0.5 * ((n * (n*n * 15731 + 789221) + 1376312589) & 0x7fffffff) /
-//     1073741824.0f);
-// }
+#define PERM_COUNT 256
+int perm[2 * PERM_COUNT] = { 0 };
+float ranvec2[2 * PERM_COUNT] = { 0 };
 
-float
-prandom(float x, float z)
+void
+perlinInit()
 {
-    float n
-        = sin((127.1f + 269.5f) * x + (311.7f + 183.3f) * z) * 43758.5453123f;
-    return 2.0f * (n - floorf(n)) - 1.0f;
-}
-
-float
-interpolate(float x, float z)
-{
-    float ft = prandom(x, z) * M_PI;
-    return (1.0f - cosf(ft)) * 0.5f;
-}
-
-float
-smoothNoise(float x, float z)
-{
-    float cy
-        = (interpolate(x - 1.0f, z - 1.0f) + interpolate(x + 1.0f, z - 1.0f)
-              + interpolate(x + 1.0f, z + 1.0f) + interpolate(x - 1.0f, z + 1.0f))
-        * 0.0625;
-    float sy = (interpolate(x - 1.0f, z) + interpolate(x + 1.0f, z)
-                   + interpolate(x, z - 1.0f) + interpolate(x, z + 1.0f))
-        * 0.125;
-    float y = (interpolate(x, z)) * 0.25;
-
-    return cy + sy + y;
-}
-
-float
-noise(float x, float z, float amp, float frq)
-{
-    return interpolate(x * frq, z * frq) * amp;
-
-    float total = 0.0f;
-    const float p = 0.5;
-    const int octaves = 5;
-
-    for (int i = 0; i < octaves; i++)
+    for (int i = 0; i < 2 * PERM_COUNT; i++)
     {
-        amp *= p;
-        frq /= p;
-
-        total += smoothNoise(x * frq, z * frq) * amp;
+        ranvec2[i] = ((float)rand() / (float)RAND_MAX - 0.5f) * 2.0f;
+        perm[i] = i % PERM_COUNT;
+    }
+    for (int i = 0; i < 2 * PERM_COUNT; i += 2)
+    {
+        float l = sqrtf(
+            ranvec2[i] * ranvec2[i] + ranvec2[i + 1] * ranvec2[i + 1]);
+        if (l == 0.0f)
+            l = 1.0f;
+        ranvec2[i] /= l;
+        ranvec2[i + 1] /= l;
     }
 
-    return total;
+    for (int t = 0; t < 2; t++)
+    {
+        int* p = &perm[t * PERM_COUNT];
+        for (int i = PERM_COUNT - 1; i > 0; i--)
+        {
+            int v = rand() % i;
+            int tmp = p[i];
+            p[i] = p[v];
+            p[v] = tmp;
+        }
+    }
+}
+
+float
+linearInterpolate(float c[2][2], float u, float v)
+{
+    float res = 0.0;
+    for (int i = 0; i < 2; i++)
+    {
+        for (int j = 0; j < 2; j++)
+        {
+            res += (i * u + (1.0f - i) * (1.0f - u)) * (j * v + (1.0f - j) * (1.0f - v))
+                * c[i][j];
+        }
+    }
+    return res;
+}
+
+float
+perlinInterpolate(float c[2][2][2], float u, float v)
+{
+    float uu = u * u * (3.0f - 2.0f * u);
+    float vv = v * v * (3.0f - 2.0f * v);
+
+    float res = 0.0f;
+    for (int i = 0; i < 2; i++)
+    {
+        for (int j = 0; j < 2; j++)
+        {
+            float weight[2] = { u - (float)i, v - (float)j };
+            res += (i * uu + (1.0f - i) * (1.0f - uu))
+                * (j * vv + (1.0f - j) * (1.0f - vv))
+                * (c[i][j][0] * weight[0] + c[i][j][1] * weight[1]);
+        }
+    }
+    return res;
+}
+
+float
+perlinNoise(float x, float y)
+{
+    float u = x - floorf(x);
+    float v = y - floorf(y);
+
+    int i = (int)(floorf(x));
+    int j = (int)(floorf(y));
+
+    float c[2][2][2];
+    for (int ii = 0; ii < 2; ii++)
+    {
+        for (int jj = 0; jj < 2; jj++)
+        {
+            int idx = perm[(i + ii) & 255] ^ perm[((j + jj) & 255) + PERM_COUNT];
+            for (int k = 0; k < 2; k++)
+            {
+                c[ii][jj][k] = ranvec2[2 * idx + k];
+            }
+        }
+    }
+
+    return (1.0f + perlinInterpolate(c, u, v)) * 0.5f;
+}
+
+float
+perlinTurbulence(float x, float y, float amp, float freq, int depth)
+{
+    if (depth < 1)
+        return perlinNoise(x * freq, y * freq) * amp;
+    return perlinNoise(x * freq, y * freq) * amp + perlinTurbulence(x, y, amp * 0.5f, freq * 2.0f, depth - 1);
 }
