@@ -11,6 +11,7 @@ createWindow(const char* name, Camera* camera);
 
 void
 render(GLFWwindow* window, const Renderable* toRender);
+
 void
 processInput(GLFWwindow* window);
 

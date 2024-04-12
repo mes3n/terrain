@@ -11,9 +11,6 @@
 void
 getLightPos(Vec3* lightOrigin, double time);
 
-// GLuint
-// generateIcoSphere(float radius, int refine, int* sphereSize);
-
 GLuint
 generateUVSphere(float radius, int* sphereSize);
 

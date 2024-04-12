@@ -15,6 +15,10 @@ typedef struct Renderable
 int
 addRenderable(Renderable** head, const GLuint shader, const GLuint vao,
     const int size);
+
+void
+removeRenderable(Renderable** head, const GLuint vao);
+
 void
 clearRenderable(Renderable* head);
 

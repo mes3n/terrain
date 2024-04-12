@@ -5,7 +5,7 @@ MYDIR = .
 SRC_DIR = $(MYDIR)/src
 DEP_DIR = $(MYDIR)/deps
 OBJ_DIR = $(MYDIR)/obj
-CFLAGS = -Wall -Wextra -pedantic -g -Ideps
+CFLAGS = -Wall -Wextra -pedantic -g -Ideps -O2
 LDFLAGS = -Wall -Wextra -pedantic -g -lm -lglfw -lGL
 
 # create list of object files from source files but replace ".cpp" and "src"

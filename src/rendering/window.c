@@ -8,45 +8,32 @@
 #include <stdio.h>
 
 static void
-framebuffer_size_callback(GLFWwindow* window, int width, int heigth)
+framebufferSizeCallback(GLFWwindow* window, int width, int heigth)
 {
     glViewport(0, 0, width, heigth);
 }
 
 static void
-cursor_position_callback(GLFWwindow* window, double xpos, double ypos)
+cursorPositionCallback(GLFWwindow* window, double xpos, double ypos)
 {
-    static char counter = 0;
+    Camera* camera = glfwGetWindowUserPointer(window);
 
-    static const double xcenter = 1920 * 0.5;
-    static const double ycenter = 1080 * 0.5;
+    float dx = (float)(xpos);
+    float dy = (float)(ypos);
 
-    if (counter < 5)
-    {
-        counter++;
-        glfwSetCursorPos(window, xcenter, ycenter);
-    }
-    else
-    {
-        Camera* camera = glfwGetWindowUserPointer(window);
+    camera->yaw += dx * camera->sensitivity;
+    camera->pitch -= dy * camera->sensitivity;
 
-        float dx = (float)(xpos - xcenter);
-        float dy = (float)(ypos - ycenter);
+    if (camera->pitch > 89.0f)
+        camera->pitch = 89.0f;
+    if (camera->pitch < -89.0f)
+        camera->pitch = -89.0f;
 
-        camera->yaw += dx * camera->sensitivity;
-        camera->pitch -= dy * camera->sensitivity;
+    camera->forward.x = cosf(camera->yaw + M_PI_2);
+    camera->forward.y = 0.0f;
+    camera->forward.z = sinf(camera->yaw + M_PI_2);
 
-        if (camera->pitch > 89.0f)
-            camera->pitch = 89.0f;
-        if (camera->pitch < -89.0f)
-            camera->pitch = -89.0f;
-
-        camera->forward.x = cosf(camera->yaw + M_PI_2);
-        camera->forward.y = 0.0f;
-        camera->forward.z = sinf(camera->yaw + M_PI_2);
-
-        glfwSetCursorPos(window, xcenter, ycenter);
-    }
+    glfwSetCursorPos(window, 0, 0);
 }
 
 GLFWwindow*
@@ -81,13 +68,13 @@ createWindow(const char* name, Camera* camera)
         return NULL;
     }
     glfwMakeContextCurrent(window);
-    glfwSetCursorPosCallback(window, cursor_position_callback);
-    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+    glfwSetCursorPosCallback(window, cursorPositionCallback);
+    glfwSetFramebufferSizeCallback(window, framebufferSizeCallback);
 
     glfwSetWindowUserPointer(window, camera);
 
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-    glfwSetCursorPos(window, mode->width * 0.5f, mode->height * 0.5f);
+    glfwSetCursorPos(window, 0, 0);
 
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
     {
@@ -106,15 +93,12 @@ createWindow(const char* name, Camera* camera)
 void
 processInput(GLFWwindow* window)
 {
-    Camera* camera = glfwGetWindowUserPointer(window);
-
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, 1);
 
-    Vec3 velocity;
-    velocity.x = 0.0f;
-    velocity.y = 0.0f;
-    velocity.z = 0.0f;
+    glfwPollEvents();
+    Camera* camera = glfwGetWindowUserPointer(window);
+    Vec3 velocity = { 0.0f, 0.0f, 0.0f };
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
         velocity = addVector(velocity, camera->forward);
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)

@@ -2,6 +2,7 @@
 
 #include <GLFW/glfw3.h>
 
+#include "math/vector.h"
 #include "rendering/camera.h"
 #include "rendering/renderable.h"
 #include "rendering/shader.h"
@@ -9,6 +10,7 @@
 
 #include "world/generation.h"
 #include "world/light.h"
+#include "world/noise.h"
 
 #include <stdio.h>
 
@@ -48,14 +50,17 @@ main(void)
 
     Renderable* world = NULL;
 
-    int terrainSize;
-    GLuint terrain = generateTerrain(500, 500, &terrainSize);
-    addRenderable(&world, basicShader, terrain, terrainSize);
+    perlinInit();
 
-    // int icoSphereSize;
-    // GLuint icoSphere = generateIcoSphere(10.0f, 0, &icoSphereSize);
-    // toRender[renderCount++] = (Renderable){.vao = icoSphere, .size =
-    // icoSphereSize};
+    int terrainSize;
+    for (int i = -2; i <= 2; i++)
+    {
+        for (int j = -2; j <= 2; j++)
+        {
+            GLuint chunk = generateChunk(i, j, &terrainSize);
+            addRenderable(&world, basicShader, chunk, terrainSize);
+        }
+    }
 
     int uvSphereSize;
     GLuint uvSphere = generateUVSphere(5.0f, &uvSphereSize);
@@ -63,12 +68,11 @@ main(void)
 
     // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     // glLineWidth(5.0f);
-
-    glEnable(GL_PROGRAM_POINT_SIZE);
+    //
+    // glEnable(GL_PROGRAM_POINT_SIZE);
 
     float matrix3d[16];
     Vec3 lightOrigin;
-
     while (!glfwWindowShouldClose(window))
     {
         processInput(window);
@@ -83,8 +87,6 @@ main(void)
         setVec3(lightShader, "lightOrigin", &lightOrigin.x);
 
         render(window, world);
-
-        glfwPollEvents();
     }
 
     Renderable* head = world;

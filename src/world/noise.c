@@ -65,8 +65,8 @@ perlinInterpolate(float c[2][2][2], float u, float v)
         for (int j = 0; j < 2; j++)
         {
             float weight[2] = { u - (float)i, v - (float)j };
-            res += (i * uu + (1.0f - i) * (1.0f - uu))
-                * (j * vv + (1.0f - j) * (1.0f - vv))
+            res += (i * uu + (1 - i) * (1.0f - uu))
+                * (j * vv + (1 - j) * (1.0f - vv))
                 * (c[i][j][0] * weight[0] + c[i][j][1] * weight[1]);
         }
     }

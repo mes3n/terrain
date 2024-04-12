@@ -23,6 +23,22 @@ addRenderable(Renderable** head, const GLuint shader, const GLuint vao,
 }
 
 void
+removeRenderable(Renderable** head, const GLuint vao)
+{
+    if (*head == NULL)
+    {
+        return;
+    }
+    if ((*head)->vao == vao)
+    {
+        Renderable* next = (*head)->next;
+        free(*head);
+        *head = next;
+    }
+    return removeRenderable(&(*head)->next, vao);
+}
+
+void
 clearRenderable(Renderable* head)
 {
     if (head == NULL)
